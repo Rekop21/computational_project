@@ -3,6 +3,7 @@ from numpy import *
 import random
 import matplotlib.pyplot as plt
 
+#test
 #Initialize the matrix with size and density given as arguments
 def initialize(size, density):
     num_of_minuses = round((1-density) * size**2)
