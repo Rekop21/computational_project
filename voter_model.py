@@ -15,9 +15,9 @@ def initialize(size, density):
     for i in range(size):
         for j in range(size):
             if place in places:
-                matrix[i][j] = 0
+                matrix[i][j] = -1
             place += 1
-
+    print(matrix)
     return matrix
 
 #Choose a random voter and adopt an value of a random voter.
@@ -94,4 +94,5 @@ def different_sizes():
     plt.plot(sizes, durations)
     plt.show()
 
-different_sizes()
+#different_sizes()
+initialize(10, 0.5)
