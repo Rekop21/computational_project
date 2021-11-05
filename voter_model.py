@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 #Initialize the matrix with size and density given as arguments
 def initialize(size, density):
     num_of_minuses = round((1-density) * size**2)
-    places = random.sample(range(size**2), num_of_minuses)
+    places = random.sample(range(size**2), int(num_of_minuses) )
 
     matrix = ones(shape=(size,size))
     
@@ -42,10 +42,11 @@ def adopt_value(matrix, n):
 
 #Check if matrix is complete
 def check_matrix(matrix, size):
-    sum = 0
+    """sum = 0
     for i in range(size):
         for j in range(size):
-            sum += matrix[i][j]
+            sum += matrix[i][j] """
+    sum = matrix.sum() #sum over all elements
     return sum
     
     
@@ -67,7 +68,7 @@ def different_densitys():
     while density < 1:
         print(density)
         N = []
-        for i in range(100):
+        for i in range(30):
             N.append(solve_matrix(10, density))
         durations.append(sum(N)/len(N))
         densitys.append(density)
@@ -94,4 +95,4 @@ def different_sizes():
     plt.plot(sizes, durations)
     plt.show()
 
-different_sizes()
+different_densitys()
