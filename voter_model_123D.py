@@ -126,8 +126,8 @@ def plot_density():
 
 #This finds out the consensus time as a function of size
 def different_sizes(dim=2,interval = 2, rho=0.5, upper = 200,nruns=100):
-    
-    sizes = []
+
+    Ns = []
     durations = []
     ratio = []
 
@@ -135,21 +135,21 @@ def different_sizes(dim=2,interval = 2, rho=0.5, upper = 200,nruns=100):
     while size < upper:
         size += interval
         print(size)
-        N = []
+        vals = []
         for i in range(nruns):
-            N.append(solve_matrix(size, rho, dim)[0])
-        durations.append(sum(N)/len(N))
-        sizes.append(size**dim)
+            vals.append(solve_matrix(size, rho, dim)[0])
+        durations.append(sum(vals)/len(vals))
+        Ns.append(size**dim)
+
+    return Ns,durations,ratio
     
-    return sizes,durations,ratio
     
-    
-#sizes1,durations1,ratio1 = different_sizes(dim=1,interval = 10,upper = 140,nruns=50)
-#sizes2,durations2,ratio2 = different_sizes(dim=2,interval = 2, upper = 14,nruns=50)
-#sizes3,durations3,ratio3 = different_sizes(dim=3,interval = 1, upper = 10,nruns=50)
+Ns1,durations1,ratio1 = different_sizes(dim=1,interval = 10,upper = 140,nruns=50)
+Ns2,durations2,ratio2 = different_sizes(dim=2,interval = 2, upper = 14,nruns=50)
+Ns3,durations3,ratio3 = different_sizes(dim=3,interval = 1, upper = 10,nruns=50)
 
 
-def plot_durations(sizes_all, durations_all, rho = 0.5):
+def plot_durations(Ns_all, durations_all, rho = 0.5):
 
     fig,axs = plt.subplots(1,3,figsize=(10,4))
     titles = ["1D","2D","3D"]
@@ -162,15 +162,14 @@ def plot_durations(sizes_all, durations_all, rho = 0.5):
         ax = axs[ax_ind]
 
         #sizes,durations,ratio = different_sizes(dim, intervals[ax_ind], rho, upper[ax_ind])
-        sizes,durations = sizes_all[ax_ind],durations_all[ax_ind]
+        Ns,durations = Ns_all[ax_ind],durations_all[ax_ind]
         theoretical = []
         
-        for i in range(len(sizes)):
-            N = sizes[i]
+        for i in range(len(Ns)):
+            N = Ns[i]
             
             if dim == 1:
-                #theoretical.append(0.15*N*math.log(N))
-                theoretical.append(0.27*N**3)
+                theoretical.append(0.2*N**3)
             elif dim == 2:
                 theoretical.append(0.3*N**2*(math.log(N)))
             elif dim == 3:
@@ -178,8 +177,8 @@ def plot_durations(sizes_all, durations_all, rho = 0.5):
             #ratio.append(durations[i]/size*math.log(size))
 
         #print(ratio)
-        ax.plot(sizes, durations, color='b', label='simulation',marker="o")
-        ax.plot(sizes, theoretical, color='g', label='theoretical',marker="o")
+        ax.plot(Ns, durations, color='b', label='simulation',marker="o")
+        ax.plot(Ns, theoretical, color='g', label='theoretical',marker="o")
         ax.set_ylabel("duration until consensus",fontsize = 14)
         ax.set_xlabel("N",fontsize=14)
         ax.set_title(titles[ax_ind],fontsize=16)
@@ -189,6 +188,6 @@ def plot_durations(sizes_all, durations_all, rho = 0.5):
     #fig.savefig("figs/durations_all.pdf")
     plt.show()
     
-#plot_durations([sizes1,sizes2,sizes3],[durations1,durations2,durations3],rho = 0.5)
+plot_durations([Ns1,Ns2,Ns3],[durations1,durations2,durations3],rho = 0.5)
 
 
