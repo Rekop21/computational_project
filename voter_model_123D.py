@@ -39,7 +39,7 @@ def initialize(size, density,dim):
 
 
 #Choose a random voter and adopt a value of a random voter.
-def adopt_value(matrix, n, dim):
+def adopt_value(matrix, n, dim, periodic):
     
     place = []
     for d in range(dim):
@@ -63,8 +63,28 @@ def adopt_value(matrix, n, dim):
             return helper(place, poss_directions,dim)
         else:
             return neighbour
+        
+    def helper_periodic(place,poss_directions,dim):
+        
+        vec = random.choice(poss_directions)
+        neighbour = []
+        for d in range(dim):
+            ind = place[d]-vec[d]
+            
+            if ind == -1:
+                ind = n-1
+            elif ind == n:
+                ind = 0
+            
+            neighbour.append(ind)
+            
+        return neighbour
+            
+    if periodic == False:
+        neig = helper(place, directions,dim)
+    else:
+        neig = helper_periodic(place,directions,dim)
     
-    neig = helper(place, directions,dim)
     matrix[tuple(place)] = matrix[tuple(neig)]
 
     return matrix
@@ -73,17 +93,59 @@ def adopt_value(matrix, n, dim):
 #Check if matrix is complete. Returns the sum of entries divided by the size. So it returns either 1 or -1 if completed.
 def check_matrix(matrix, size, dim):
     sum = matrix.sum() #sum over all elements
+    val = sum/(size**dim)
+    #if abs(abs(val)-1.0) < 0.001:
+        #print(matrix)
+    return val
+    
+    
+# Call adopt_value function until the matrix is completed.
+def solve_matrix(size, density, dim, periodic = False):
+    matrix = initialize(size, density, dim)
+    n = 0
+    while check_matrix(matrix, size, dim) not in [-1, 1]:
+        matrix = adopt_value(matrix, size, dim, periodic)
+        n += 1
+    
+    return (n, check_matrix(matrix, size, dim))
+
+#This function calculates probabilities as a function of density
+def different_densitys(n_runs,rho_step=0.05,dim=2):
+    densitys = []
+    durations = []
+    probability = []
+
+    density = 0
+    while density <= 1.0001:
+        N = []
+        succesfull_runs = 0 #runs that end because all sites have value 1
+        for i in range(n_runs):
+            run_results = solve_matrix(10, density,dim)
+            N.append(run_results[0])
+            if run_results[1] == 1:
+                succesfull_runs += 1
+
+        durations.append(sum(N)/len(N))
+        probability.append(succesfull_runs/n_runs)
+        densitys.append(density)
+        density += rho_step
+        
+    return densitys,probability,durations
+
+#Check if matrix is complete. Returns the sum of entries divided by the size. So it returns either 1 or -1 if completed.
+def check_matrix(matrix, size, dim):
+    sum = matrix.sum() #sum over all elements
     return sum/(size**dim)
     
     
 # Call adopt_value function until the matrix is completed.
-def solve_matrix(size, density, dim):
+def solve_matrix(size, density, dim, periodic = False):
     matrix = initialize(size, density, dim)
     n = 0
     while check_matrix(matrix, size, dim) not in [-1, 1]:
-        matrix = adopt_value(matrix, size, dim)
+        matrix = adopt_value(matrix, size, dim, periodic)
         n += 1
-    
+
     return (n, check_matrix(matrix, size, dim))
 
 #This function calculates probabilities as a function of density
@@ -125,7 +187,7 @@ def plot_density():
 #plot_density()
 
 #This finds out the consensus time as a function of size
-def different_sizes(dim=2,interval = 2, rho=0.5, upper = 200,nruns=100):
+def different_sizes(dim=2,interval = 2, rho=0.5, upper = 200,nruns=100, periodic = False):
 
     Ns = []
     durations = []
@@ -137,7 +199,7 @@ def different_sizes(dim=2,interval = 2, rho=0.5, upper = 200,nruns=100):
         print(size)
         vals = []
         for i in range(nruns):
-            vals.append(solve_matrix(size, rho, dim)[0])
+            vals.append(solve_matrix(size, rho, dim,periodic)[0])
         durations.append(sum(vals)/len(vals))
         Ns.append(size**dim)
 
@@ -188,6 +250,6 @@ def plot_durations(Ns_all, durations_all, rho = 0.5):
     #fig.savefig("figs/durations_all.pdf")
     plt.show()
     
-plot_durations([Ns1,Ns2,Ns3],[durations1,durations2,durations3],rho = 0.5)
+#plot_durations([Ns1,Ns2,Ns3],[durations1,durations2,durations3],rho = 0.5)
 
 
