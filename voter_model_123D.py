@@ -215,8 +215,6 @@ def plot_durations(Ns_all, durations_all, rho = 0.5):
 
     fig,axs = plt.subplots(1,3,figsize=(10,4))
     titles = ["1D","2D","3D"]
-    #intervals = [10,2,1]
-    #upper = [200,200,8]
 
     for ax_ind in range(3):
         
@@ -231,25 +229,30 @@ def plot_durations(Ns_all, durations_all, rho = 0.5):
             N = Ns[i]
             
             if dim == 1:
-                theoretical.append(0.2*N**3)
+                theoretical.append(0.1*N**3) #0.18
+                func = r"$0.18N^3$"
             elif dim == 2:
-                theoretical.append(0.3*N**2*(math.log(N)))
+                theoretical.append(0.25*N**2*(math.log(N))) #0.3
+                func = r"$0.3\log(N)N^2$"
             elif dim == 3:
-                theoretical.append(0.2*N**2*(math.log(N)))
-            #ratio.append(durations[i]/size*math.log(size))
+                #theoretical.append(0.15*N**2*(math.log(N)))
+                theoretical.append(0.9*N**2)
+                #func = r"$0.15\log(N)N^2$"
+                func = r"$0.9 N^2$"
+        #ratio.append(durations[i]/size*math.log(size))
 
         #print(ratio)
         ax.plot(Ns, durations, color='b', label='simulation',marker="o")
-        ax.plot(Ns, theoretical, color='g', label='theoretical',marker="o")
+        ax.plot(Ns, theoretical, color='g', label=func,marker="o")
         ax.set_ylabel("duration until consensus",fontsize = 14)
         ax.set_xlabel("N",fontsize=14)
         ax.set_title(titles[ax_ind],fontsize=16)
 
-    axs[2].legend(fontsize=14)
+        ax.legend(fontsize=12)
     fig.tight_layout()
-    #fig.savefig("figs/durations_all.pdf")
+    #fig.savefig("figs/durations_all_final.pdf")
     plt.show()
-    
-#plot_durations([Ns1,Ns2,Ns3],[durations1,durations2,durations3],rho = 0.5)
+        
+plot_durations([Ns1,Ns2,Ns3],[durations1,durations2,durations3],rho = 0.5)
 
 
